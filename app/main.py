@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from starlette.responses import Response
 
 from app.db.models import Img2imgArgs, Txt2imgArgs, ExtraSingleImage
-from app.api import api
+from app.api.endpoints import api
 from app.manager import reqq
 
 app = FastAPI()

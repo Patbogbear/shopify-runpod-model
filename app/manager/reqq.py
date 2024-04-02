@@ -3,7 +3,7 @@ import queue
 import threading
 import time
 import copy
-from app.api import api
+from app.api.endpoints import api
 from fastapi import HTTPException
 
 
