@@ -18,4 +18,9 @@ jobs:
 
       - name: Deploy to RunPod
         run: |
-          ssh -o StrictHostKeyChecking=no user@runpod-server "cd /stable-fiffusion-runpod && git pull && deploy-commands"
+          ssh -o StrictHostKeyChecking=no oot@213.173.108.202 -p 15539 << EOF
+            cd /path/to/shopify-runpod-model
+            ./install.sh
+            ./launch_sd.sh
+          EOF
+
