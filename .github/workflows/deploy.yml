@@ -34,7 +34,7 @@ jobs:
 
     - name: Execute scripts on RunPod
       run: |
-        ssh -o StrictHostKeyChecking=no root@213.173.108.202 -p 15539 << EOF
+        ssh -o StrictHostKeyChecking=no root@213.173.102.224 -p 10657 << EOF
         cd /root/shopify-runpod-model
 
         if [ -f "./install.sh" ]; then
