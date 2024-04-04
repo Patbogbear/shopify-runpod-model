@@ -16,27 +16,38 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.RUNPOD_PRIVATE_KEY }}
 
-    - name: Test SSH connection
-      run: |
-        ssh -T git@github.com || true
-
-
     - name: Clone or update project on RunPod
       run: |
         ssh -o StrictHostKeyChecking=no root@213.173.108.202 -p 15539 << EOF
-          if [ -d "/path/to/your/project/stable-diffusion-runpod" ]; then
-            cd /path/to/your/project/stable-diffusion-runpod && git pull
-          else
-            mkdir -p /shopify-runpod-model
-            cd /shopify-runpod-model
-            git clone https://github.com/Patbogbear/shopify-runpod-model.git
-          fi
+        # 替换以下路径为你想要克隆项目的具体路径
+        PROJECT_PATH="/root/shopify-runpod-model"
+
+        if [ -d "\$PROJECT_PATH" ]; then
+          echo "Project directory exists. Pulling latest changes."
+          cd \$PROJECT_PATH && git pull
+        else
+          echo "Project directory does not exist. Cloning the repository."
+          git clone git@github.com:Patbogbear/shopify-runpod-model.git \$PROJECT_PATH
+        fi
         EOF
 
     - name: Execute scripts on RunPod
       run: |
         ssh -o StrictHostKeyChecking=no root@213.173.108.202 -p 15539 << EOF
-          cd /path/to/your/project/stable-diffusion-runpod
+        PROJECT_PATH="/root/shopify-runpod-model"
+        cd \$PROJECT_PATH
+
+        if [ -f "./install.sh" ]; then
+          echo "Running install.sh"
           ./install.sh
+        else
+          echo "install.sh does not exist."
+        fi
+
+        if [ -f "./launch_sd.sh" ]; then
+          echo "Running launch_sd.sh"
           ./launch_sd.sh
+        else
+          echo "launch_sd.sh does not exist."
+        fi
         EOF
