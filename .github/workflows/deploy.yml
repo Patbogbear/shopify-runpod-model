@@ -24,7 +24,7 @@ jobs:
           else
             mkdir -p /shopify-runpod-model
             cd /shopify-runpod-model
-            git clone https://github.com/Patbogbear/shopify-runpod-model.git
+            git clone git@github.com:Patbogbear/shopify-runpod-model.git
           fi
         EOF
 
