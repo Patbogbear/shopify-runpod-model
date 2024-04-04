@@ -8,19 +8,30 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.RUNPOD_PRIVATE_KEY }}
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.RUNPOD_PRIVATE_KEY }}
 
-      - name: Deploy to RunPod
-        run: |
-          ssh -o StrictHostKeyChecking=no root@213.173.108.202 -p 15539 << EOF
-            cd /path/to/shopify-runpod-model
-            ./install.sh
-            ./launch_sd.sh
-          EOF
+    - name: Clone or update project on RunPod
+      run: |
+        ssh -o StrictHostKeyChecking=no root@213.173.108.202 -p 15539 << EOF
+          if [ -d "/path/to/your/project/stable-diffusion-runpod" ]; then
+            cd /path/to/your/project/stable-diffusion-runpod && git pull
+          else
+            mkdir -p /shopify-runpod-model
+            cd /shopify-runpod-model
+            git clone https://github.com/Patbogbear/shopify-runpod-model.git
+          fi
+        EOF
 
+    - name: Execute scripts on RunPod
+      run: |
+        ssh -o StrictHostKeyChecking=no root@213.173.108.202 -p 15539 << EOF
+          cd /path/to/your/project/stable-diffusion-runpod
+          ./install.sh
+          ./launch_sd.sh
+        EOF
