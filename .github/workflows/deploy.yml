@@ -11,7 +11,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Setup SSH
+    - name: Setup SSH for RunPod Access
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.RUNPOD_PRIVATE_KEY }}
@@ -19,7 +19,7 @@ jobs:
     - name: Clone or update project on RunPod
       run: |
         ssh -o StrictHostKeyChecking=no root@213.173.108.202 -p 15539 << EOF
-        # 替换以下路径为你想要克隆项目的具体路径
+        # Define the project path
         PROJECT_PATH="/root/shopify-runpod-model"
 
         if [ -d "\$PROJECT_PATH" ]; then
@@ -27,18 +27,19 @@ jobs:
           cd \$PROJECT_PATH && git pull
         else
           echo "Project directory does not exist. Cloning the repository."
-          git clone git@github.com:Patbogbear/shopify-runpod-model.git \$PROJECT_PATH
+          # Using HTTPS to clone the repository
+          git clone https://github.com/Patbogbear/shopify-runpod-model.git \$PROJECT_PATH
         fi
         EOF
 
     - name: Execute scripts on RunPod
       run: |
         ssh -o StrictHostKeyChecking=no root@213.173.108.202 -p 15539 << EOF
-        PROJECT_PATH="/root/shopify-runpod-model"
-        cd \$PROJECT_PATH
+        cd /root/shopify-runpod-model
 
         if [ -f "./install.sh" ]; then
           echo "Running install.sh"
+          chmod +x ./install.sh
           ./install.sh
         else
           echo "install.sh does not exist."
@@ -46,6 +47,7 @@ jobs:
 
         if [ -f "./launch_sd.sh" ]; then
           echo "Running launch_sd.sh"
+          chmod +x ./launch_sd.sh
           ./launch_sd.sh
         else
           echo "launch_sd.sh does not exist."
